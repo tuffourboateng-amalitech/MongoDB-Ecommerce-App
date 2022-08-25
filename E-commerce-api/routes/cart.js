@@ -1,65 +1,21 @@
-const router = require('express').Router();
-const Product = require('../models/Product');
+const cartRouter = require('express').Router();
 const {verifyToken, verifyTokenandAdmin, verifyTokenAuthorization}= require('./verifytoken')
-
-
-
+const {addCartItem, updateCartItem,deleteCartItem, findByUserId, allCartItems} = require('../controllers/cart.controllers');
 // CREATE
-router.post('/', verifyToken, async(req, res)=>{
-    const newCart = new Product(req.body)
-
-    try {
-        const savedCart = await newCart.save();
-        res.status(200).json(savedCart);
-    } catch (error) {
-        res.status(500).json(error)
-    }
-})
+cartRouter.post('/',  verifyToken, addCartItem)
 
 // UPDATE
-router.put('/:id', verifyTokenAuthorization, async (req, res)=>{
-
-    try {
-        const updatedCart = await Cart.findByIdAndUpdate(req.params.id, {
-            $set: req.body
-        }, {new:true}
-        );
-        res.status(200).json(updatedCart)
-    } catch (error) {
-        res.status(500).json(error);
-    }
-})
+cartRouter.put('/:id', verifyTokenAuthorization, updateCartItem)
 
 
 // DELETE
-router.delete('/:id', verifyTokenAuthorization, async(req, res)=>{
-    try {
-        await Cart.findByIdAndDelete(req.params.id);
-        res.status(200).json('Cart has been deleted...')
-    } catch (error) {
-        res.status(500).json(error)
-    }
-})
+cartRouter.delete('/:id', verifyTokenAuthorization, deleteCartItem)
 
 // GET USER CART
-router.get('/find/:userId', verifyTokenAuthorization, async(req, res)=>{
-    try {
-      const cart = await Cart.findOne({userId: req.params.userId});
-        res.status(200).json(cart)
-    } catch (error) {
-        res.status(500).json(error)
-    }
-})
+cartRouter.get('/find/:userId', verifyTokenAuthorization, findByUserId)
 
 // GET ALL 
 
-router.get('/', verifyTokenandAdmin, async(req, res)=>{
-    try {
-        const carts = await Cart.find();
-        res.status(200).json(carts)
-    } catch (error) {
-        res.status(500).json(error)
-    }
-})
+cartRouter.get('/', verifyTokenandAdmin, allCartItems)
 
-module.exports = router;
+module.exports = {cartRouter};

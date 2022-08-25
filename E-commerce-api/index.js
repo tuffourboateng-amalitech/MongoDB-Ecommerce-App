@@ -1,27 +1,21 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-const userRoute = require('./routes/user');
-const authRoute = require('./routes/auth')
-const productRoute = require('./routes/product')
-const cartRoute = require('./routes/cart')
-const orderRoute = require('./routes/order')
+const {userRouter} = require('./routes/user')
+const {authRouter} = require('./routes/auth')
+const {productRouter} = require('./routes/product')
+const {cartRouter} = require('./routes/cart')
+const {orderRouter} = require('./routes/order')
+const mongoConnect = require('./config/mongoConfig')
 
 
 const app = express();
 
-dotenv.config();
+mongoConnect();
 
-mongoose.connect(process.env.MONGO_URL).then(()=>{
-    console.log('Database connection successful'); 
-}).catch((err)=>{console.log(err)});
-
-
-app.use('/api/users', userRoute)
-app.use('/api/auth', authRoute)
-app.use('/api/products', productRoute)
-app.use('/api/carts', cartRoute)
-app.use('/api/orders', orderRoute)
+app.use('/api/users', userRouter)
+app.use('/api/auth', authRouter)
+app.use('/api/products', productRouter)
+app.use('/api/carts', cartRouter)
+app.use('/api/orders', orderRouter)
 app.use(express.json());
 
 app.listen(process.env.PORT || 5000, ()=>{
